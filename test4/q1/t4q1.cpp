@@ -28,7 +28,7 @@ vector<vector<int>> get_dist(vector<vector<int>>& g, queue<pii>& q) {
             int x = i + di, y = j + dj;
             if (
                 (x >= 0 && x < m && y >= 0 && y < n) &&
-                g[x][y] != TREE && dist[i][j] + 1 < dist[x][j]
+                g[x][y] != TREE && dist[i][j] + 1 < dist[x][y]
             ) {
                 q.push({x, y});
             }
@@ -38,10 +38,12 @@ vector<vector<int>> get_dist(vector<vector<int>>& g, queue<pii>& q) {
     return dist;
 }
 
-int main() {
+int main() {            // Time complexity O(h * w)
     ios_base::sync_with_stdio(false);
     cin.tie(NULL);
+    
     // freopen("inp.txt", "r", stdin);
+    // ^^^ uncomment when you put in an inp.txt file with test cases
 
     int T;
     cin >> T;

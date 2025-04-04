@@ -3,7 +3,8 @@
 using namespace std;
 using pii = pair<int, int>;
 
-int update_ans(int idx, int from, int to, int invariant, const unordered_map<int, set<int>>& inv2var) {
+int update_ans(int idx, int from, int to, int invariant, 
+               const unordered_map<int, set<int>>& inv2var) {
     if (inv2var.find(invariant) == inv2var.end()) { return 0; }
     if (to < from) { swap(from, to); }
 
@@ -17,7 +18,7 @@ int update_ans(int idx, int from, int to, int invariant, const unordered_map<int
     );
 }
 
-int main() {                            // Time complexity O(n log n)
+int main() {                // Time complexity O(n log n)
     ios_base::sync_with_stdio(false);
     cin.tie(NULL);
     freopen("inp.txt", "r", stdin);
