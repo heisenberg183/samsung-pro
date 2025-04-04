@@ -1,61 +1,80 @@
-# Test - 1
-# You are given a path on an infinite 2d lattice. The path consists of line segments parallel to either the x or y axis.Example : (1, 1) to (1, 3) to (6, 3) to (6, 6). Also there is a set of points given . You have to find how many of the given points lie on the path.
-# Input 
-# n,m
-# There were n numbers that denoted x coordinates of n points
-# There were n numbers again which denoted y coordinates of those n points
-# Now there are two more arrays of size m , one consisting of x coordinates and other y coordinates correspondingly
-# These points are the turning points in a path.
-# Examples.
-# Say i went from 1, 1 to 1, 5 to 2, 5 so the given arrays will be
-# 1, 1, 2
-# 1, 5, 5
-# In the given path , we have to find how many of the given n points lie.
+# NOT OPTIMAL
 
 from collections import defaultdict
 
+
+
 def count_points_on_path(n, m, x_points, y_points, path_x, path_y):
     # Hash maps to store horizontal and vertical segments
-    horizontal_segments = defaultdict(list)
-    vertical_segments = defaultdict(list)
-    
-    # Build the segments from the path
+    # Assume we have read:
+    # n: number of points, m: number of turning points
+    # points: a list of tuples [(x1, y1), (x2, y2), ..., (xn, yn)]
+    # path_points: a list of turning points [(p1_x, p1_y), ..., (pm_x, pm_y)]
+    points = [(x_points[i], y_points[i]) for i in range(n)]
+    path_points = [(path_x[i], path_y[i]) for i in range(m)] 
+
+    # Dictionaries for segments
+    horizontals = {}  # key: y-coordinate, value: list of intervals [ (x_start, x_end) ]
+    verticals = {}    # key: x-coordinate, value: list of intervals [ (y_start, y_end) ]
+
+    # Build segments from turning points
     for i in range(m - 1):
-        x1, y1 = path_x[i], path_y[i]
-        x2, y2 = path_x[i + 1], path_y[i + 1]
+        x1, y1 = path_points[i]
+        x2, y2 = path_points[i+1]
+        if y1 == y2:
+            y = y1
+            low = min(x1, x2)
+            high = max(x1, x2)
+            if y not in horizontals:
+                horizontals[y] = []
+            horizontals[y].append((low, high))
+        elif x1 == x2:
+            x = x1
+            low = min(y1, y2)
+            high = max(y1, y2)
+            if x not in verticals:
+                verticals[x] = []
+            verticals[x].append((low, high))
+
+    # Merge overlapping intervals in both horizontals and verticals
+    def merge_intervals(intervals):
+        intervals.sort(key=lambda x: x[0])
+        merged = []
+        for interval in intervals:
+            if not merged or merged[-1][1] < interval[0]:
+                merged.append(interval)
+            else:
+                merged[-1] = (merged[-1][0], max(merged[-1][1], interval[1]))
+        return merged
+
+    for y in horizontals:
+        horizontals[y] = merge_intervals(horizontals[y])
+
+    for x in verticals:
+        verticals[x] = merge_intervals(verticals[x])
         
-        if y1 == y2:  # Horizontal segment
-            min_x, max_x = min(x1, x2), max(x1, x2)
-            horizontal_segments[y1].append((min_x, max_x))
-        
-        if x1 == x2:  # Vertical segment
-            min_y, max_y = min(y1, y2), max(y1, y2)
-            vertical_segments[x1].append((min_y, max_y))
-    
-    # Function to check if a value lies in any range
-    def is_in_ranges(value, ranges):
-        for r_start, r_end in ranges:
-            if r_start <= value <= r_end:
-                return True
-        return False
-    
-    # Check each point against the path
-    count = 0
-    for i in range(n):
-        px, py = x_points[i], y_points[i]
-        
-        # Check horizontal segments
-        if py in horizontal_segments:
-            if is_in_ranges(px, horizontal_segments[py]):
-                count += 1
-                continue  # No need to check further
-        
-        # Check vertical segments
-        if px in vertical_segments:
-            if is_in_ranges(py, vertical_segments[px]):
-                count += 1
-    
-    return count
+
+    # Count points on the path
+    on_path = 0
+    for x, y in points:
+        found = False
+        if y in horizontals:
+            for (low, high) in horizontals[y]:
+                if low <= x <= high:
+                    found = True
+                    break
+        # Check vertical segments at x if not already found
+        if not found and x in verticals:
+            for (low, high) in verticals[x]:
+                if low <= y <= high:
+                    found = True
+                    break
+        if found:
+            on_path += 1
+
+    print(on_path)
+    return on_path
+
 
 # Example Input
 n, m = 3, 3
