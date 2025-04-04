@@ -187,7 +187,6 @@ int solve(int n, int m, vector<pi> &points, vector<pi> &pointsOnPath){
         }
     }
     return ans;
-
 }
 
 //Code
