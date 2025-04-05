@@ -3,8 +3,8 @@
 using namespace std;
 using pii = pair<int, int>;
 
-int main(int argc, char* argv[]) {      // Time complexity O(n)
-    ios_base::sync_with_stdio(false);   // where n = no. of number strings
+int main(int argc, char* argv[]) {
+    ios_base::sync_with_stdio(false);
     cin.tie(NULL);
     // freopen("inp.txt", "r", stdin);
 
