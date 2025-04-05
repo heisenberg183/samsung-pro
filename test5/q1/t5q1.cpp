@@ -6,7 +6,7 @@ using pii = pair<int, int>;
 int main(int argc, char* argv[]) {
     ios_base::sync_with_stdio(false);
     cin.tie(NULL);
-    // freopen("inp.txt", "r", stdin);
+    freopen("inp.txt", "r", stdin);
 
     int T;
     cin >> T;
@@ -21,16 +21,21 @@ int main(int argc, char* argv[]) {
             int len = num.size();
             int start = num[0] - '0';
             int end = num[len - 1] - '0';
-            if (len > dist[start][end]) {
-                dist[start][end] = len;
+            
+            array<array<int, 10>, 10> temp = dist;
+            if (len > temp[start][end]) {
+                temp[start][end] = len;
             }
+
             for (int ch = 0; ch <= 9; ch++) {
                 if (dist[ch][start] == 0) { continue; }
                 int val = dist[ch][start] + len;
-                if (val > dist[ch][end]) {
-                    dist[ch][end] = val;
+                if (val > temp[ch][end]) {
+                    temp[ch][end] = val;
                 }
             }
+
+            dist = temp;
         }
 
         int ans = 0;
